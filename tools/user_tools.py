@@ -43,6 +43,17 @@ def get_user_id(session):
     return sessions[session]["user_id"]
 
 
+def login_check():
+    session = request.cookies.get('session_id')
+    if session not in sessions:
+        return False
+    if sessions[session]["expire"] < datetime.datetime.now():
+        del (sessions[session])
+        return False
+    renew_session(session)
+    return True
+
+
 def get_user_info():
     session = request.cookies.get('session_id')
     conn = db_tools.get_conn()

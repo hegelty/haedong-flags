@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, Response
 from tools import user_tools, db_tools
 
 submit_router = Blueprint('submit', __name__, url_prefix='/submit')
@@ -15,7 +15,7 @@ def submit_home():
 @user_tools.require_login
 def submit_get(problem_id):
     if user_tools.get_user_info()['solved'] + 1 != problem_id:
-        return redirect('/submit')
+        return Response(status=403)
 
     return render_template('submit/submit.html', id=problem_id)
 
@@ -24,7 +24,7 @@ def submit_get(problem_id):
 @user_tools.require_login
 def submit_post(problem_id):
     if user_tools.get_user_info()['solved'] + 1 != problem_id:
-        return redirect('/submit')
+        return Response(status=403)
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
@@ -32,6 +32,11 @@ def submit_post(problem_id):
 
     if request.form['flag'] == curs.fetchone()[0]:
         user_tools.add_solved(problem_id)
-        return redirect('/submit')
+        return {
+            'success': True
+        }
 
-    return render_template('submit/submit.html', id=problem_id, error='틀렸습니다.')
+    return {
+        'success': False,
+        'error': '플래그가 틀렸습니다.'
+    }

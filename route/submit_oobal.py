@@ -1,25 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, flash
+from flask import Blueprint, render_template, request, redirect, flash, Response
 from tools import user_tools, db_tools
 
 oobal_router = Blueprint('oobal', __name__, url_prefix='/oobal')
 
 
-def check_tor(func):
-    def decorator(*args, **kwargs):
-        host = request.host
-        # print(host.split('.')[-1].split(':')[0])
-        return func(*args, **kwargs)
-        if host.split('.')[-1].split(':')[0] == 'onion':
-            return func(*args, **kwargs)
-        else:
-            return redirect('http://oobal.onion')
-    decorator.__name__ = func.__name__
-    return decorator
-
 
 @oobal_router.route('/', methods=['GET'])
 @user_tools.require_login
-@check_tor
 def submit_oobal_home():
     user_info = user_tools.get_user_info()
     return render_template('submit/submit_oobal_home.html', solved_oobal=user_info['solved_oobal'])
@@ -27,7 +14,6 @@ def submit_oobal_home():
 
 @oobal_router.route('/<int:id>', methods=['GET'])
 @user_tools.require_login
-@check_tor
 def submit_oobal_get(id):
     if str(id) in user_tools.get_user_info()['solved_oobal']:
         return redirect('/oobal')
@@ -36,10 +22,9 @@ def submit_oobal_get(id):
 
 @oobal_router.route('/<int:id>', methods=['POST'])
 @user_tools.require_login
-@check_tor
 def submit_oobal_post(id):
     if str(id) in user_tools.get_user_info()['solved_oobal']:
-        return redirect('/oobal')
+        return Response(status=403)
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
@@ -47,6 +32,11 @@ def submit_oobal_post(id):
 
     if request.form['flag'] == curs.fetchone()[0]:
         user_tools.add_solved_oobal(id)
-        return redirect('/submit')
+        return {
+            'success': True
+        }
 
-    return render_template('submit/submit_oobal.html', id=id, error='틀렸습니다.')
+    return {
+        'success': False,
+        'error': '플래그가 틀렸습니다.'
+    }

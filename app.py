@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from route import login, submit, submit_oobal, scoreboard
-from tools import user_tools, db_tools
+from tools import user_tools, db_tools, oauth
 
 app = Flask(__name__)
 app.register_blueprint(login.login_router)

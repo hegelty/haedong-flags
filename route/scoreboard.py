@@ -16,7 +16,7 @@ def scoreboard_get():
             data[i][1],
             data[i][2],
             data[i][3],
-            list(map(int, data[i][4].split(',')[1:]))
+            list(map(lambda x: int(x) if x.isdigit() else 0, data[i][4].split(',')[1:]))
         ]
     curs.execute('select name, student_id, problem_id, problem_type, time from history order by time desc limit 20')
     history = curs.fetchall()
@@ -35,6 +35,11 @@ def scoreboard_api():
             data[i][1],
             data[i][2],
             data[i][3],
-            list(map(int, data[i][4].split(',')[1:]))
+            list(map(lambda x: int(x) if x.isdigit() else 0, data[i][4].split(',')[1:]))
+        ] if user_tools.login_check() else [
+            data[i][0],
+            data[i][1],
+            data[i][2],
+            data[i][3]
         ]
     return data

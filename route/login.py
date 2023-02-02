@@ -1,20 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, make_response
+from flask import Blueprint, render_template, request, redirect, make_response, Response
 import requests
-from tools import user_tools, db_tools
+from tools import user_tools, db_tools, oauth
 
 secret_key = open('oauth_key', 'r').read()
 login_router = Blueprint('login', __name__, url_prefix='/login')
 
 
 @login_router.route('/', methods=['GET'])
-def login_get():
-    return render_template('login/login.html')
-
-
-@login_router.route('/callback', methods=['GET'])
 def login_post():
     code = request.args.get('code')
-    resp = requests.post('http://localhost:3000/oauth2/auth', params={
+    resp = requests.post(oauth.domain+'/oauth2/auth', params={
         'client_id': 'hd-flag',
         'scope': 'id'
     }, data={
@@ -23,37 +18,31 @@ def login_post():
     })
 
     if resp.status_code != 200:
-        return render_template('login/login.html', error='로그인에 실패했습니다.')
+        return Response(status=403)
 
     token = resp.json()['access_token']
 
-    resp = requests.post('http://localhost:3000/ex/user/info', data={
+    resp = requests.post(oauth.domain+'/ex/user/info', data={
         'token': token,
         'client_id': 'hd-flag'
     })
-
-    session_id, expire = user_tools.make_session(resp.json()['id'])
-
+    print(resp.text)
     conn = db_tools.get_conn()
     curs = conn.cursor()
     curs.execute('select id from user where id = ?', [resp.json()['id']])
 
     if not curs.fetchall():
-        response = make_response(redirect('/login/register'))
-        response.set_cookie(key='session_id', value=session_id, httponly=True, secure=True, expires=60 * 60 * 24 * 365,
-                            max_age=60 * 60 * 24 * 365)
-        return response
+        return {
+            'success': False,
+            'error':'등록되지 않은 유저입니다.',
+            'session': user_tools.make_session(resp.json()['id'])[0]
+        }
 
-    response = make_response(redirect('/'))
-    response.set_cookie(key='session_id', value=session_id, httponly=True, secure=True, expires=60 * 60 * 24 * 365,
-                        max_age=60 * 60 * 24 * 365)
-    return response
-
-
-@login_router.route('/register', methods=['GET'])
-@user_tools.require_login
-def register_get():
-    return render_template('login/register.html')
+    session_id, expire = user_tools.make_session(resp.json()['id'])
+    return {
+            'success': True,
+            'session_id': session_id
+    }
 
 
 @login_router.route('/register', methods=['POST'])
@@ -63,19 +52,32 @@ def register_post():
     student_id = request.form.get('student_id')
 
     if len(name) > 6:
-        return render_template('login/register.html', error='이름은 6글자를 넘을 수 없습니다.')
+        return {
+            'success': False,
+            'error':'이름은 6글자를 넘을 수 없습니다.'
+        }
 
     if not student_id.isdigit() or len(student_id) != 4:
-        return render_template('login/register.html', error='학번은 네자리 숫자로만 입력해주세요.')
+        return {
+            'success': False,
+            'error':'학번은 네자리 숫자로만 입력해주세요.'
+        }
 
+    user_id = user_tools.get_user_id(request.cookies.get('session_id'))
     conn = db_tools.get_conn()
     curs = conn.cursor()
+    curs.execute('select id from user where id = ?', [user_id])
 
-    session = request.cookies.get('session_id')
-    user_id = user_tools.get_user_id(session)
+    if curs.fetchall():
+        return {
+            'success': False,
+            'errer':'이미 등록된 계정입니다.'
+        }
 
     curs.execute('insert into user (id, name, student_id, score, solved, solved_oobal) values (?, ?, ?, ?, ?, ?)',
-                 [user_id, name, int(student_id), 0, 0, ','])
+                 [user_id, name, int(student_id), 0, 0, ''])
     conn.commit()
 
-    return redirect('/')
+    return {
+            'success': True
+    }
