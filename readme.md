@@ -63,7 +63,7 @@
 |:----------:|:-----------:|
 | 10 | name format error |
 | 11 | student id format error |
-| 20 | already registered |
+| 2 | already registered |
 
 ## submit(normal problem)
 * Method: POST
