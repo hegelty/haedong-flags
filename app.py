@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flask_cors import CORS
 from route import login, submit, submit_oobal, scoreboard
 from tools import user_tools, db_tools, oauth
 
@@ -7,6 +8,7 @@ app.register_blueprint(login.login_router)
 app.register_blueprint(submit.submit_router)
 app.register_blueprint(submit_oobal.oobal_router)
 app.register_blueprint(scoreboard.scoreboard_router)
+CORS(app, resources={r"*": {"origins": "*"}})
 
 
 @app.route('/')
