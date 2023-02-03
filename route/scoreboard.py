@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, make_response
+from flask import Blueprint, render_template, request, redirect, make_response, jsonify
 from tools import user_tools, db_tools
 
 scoreboard_router = Blueprint('scoreboard', __name__, url_prefix='/scoreboard')
@@ -42,4 +42,4 @@ def scoreboard_api():
             data[i][2],
             data[i][3]
         ]
-    return data
+    return jsonify(data)
