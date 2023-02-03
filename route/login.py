@@ -10,7 +10,7 @@ login_router = Blueprint('login', __name__, url_prefix='/login')
 def login_post():
     code = request.args.get('code')
     resp = requests.post(oauth.domain+'/oauth2/auth', params={
-        'client_id': 'hd-flag',
+        'client_id': oauth.id,
         'scope': 'id'
     }, data={
         'client_secret': secret_key,
@@ -24,7 +24,7 @@ def login_post():
 
     resp = requests.post(oauth.domain+'/ex/user/info', data={
         'token': token,
-        'client_id': 'hd-flag'
+        'client_id': oauth.id
     })
     print(resp.text)
     conn = db_tools.get_conn()
