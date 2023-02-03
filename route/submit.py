@@ -11,35 +11,42 @@ def submit_home():
     return render_template('submit/submit_home.html', solved=user_info['solved'], solved_oobal=user_info['solved_oobal'])
 
 
-@submit_router.route('/<int:problem_id>', methods=['GET'])
+@submit_router.route('/', methods=['POST'])
 @user_tools.require_login
-def submit_get(problem_id):
-    if user_tools.get_user_info()['solved'] + 1 != problem_id:
-        return Response(status=403)
-
-    return render_template('submit/submit.html', id=problem_id)
-
-
-@submit_router.route('/<int:problem_id>', methods=['POST'])
-@user_tools.require_login
-def submit_post(problem_id):
-    if user_tools.get_user_info()['solved'] + 1 != problem_id:
-        return {
-            'success': False,
-            'error': 1
-        }
+def submit_post():
+    flag = request.form['flag']
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
-    curs.execute('select answer from problem where id = ?', [problem_id])
-
-    if request.form['flag'] == curs.fetchone()[0]:
-        user_tools.add_solved(problem_id)
+    curs.execute('select id, score from problem where answer = ?', [flag])
+    problem = curs.fetchall()
+    if not problem:
+        curs.execute('select id, score from problem_oobal where answer = ?', [flag])
+        problem = curs.fetchall()
+        if not problem:
+            return {
+                'success': False,
+                'error': 2
+            }
+        else:
+            if str(problem[0][0]) in user_tools.get_user_info()['solved_oobal']:
+                return {
+                    'success': False,
+                    'error': 1
+                }
+            user_tools.add_solved_oobal(problem[0][0])
+            return {
+                'success': True,
+                'oobal': True
+            }
+    else:
+        if int(problem[0][0]) != user_tools.get_user_info()['solved'] + 1:
+            return {
+                'success': False,
+                'error': 1
+            }
+        user_tools.add_solved(problem[0][0])
         return {
-            'success': True
+            'success': True,
+            'oobal': False
         }
-
-    return {
-        'success': False,
-        'error': 2
-    }

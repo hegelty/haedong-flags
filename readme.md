@@ -65,10 +65,10 @@
 | 11 | student id format error |
 | 2 | already registered |
 
-## submit(normal problem)
+## submit
 * Method: POST
 * cookies: session_id
-* endpoint: /submit/<int:id>
+* endpoint: /submit
 * from datas:
 
 | name |type| description  |
@@ -76,12 +76,14 @@
 | flag |string| flag |
 
 * response:
-  * success:  
+  * success:
 ```json
 {
-  "success": true
+  "success": true,
+  "oobal": true/false
 }
 ```
+
   * error:  
 ```json
 {
@@ -92,35 +94,6 @@
 | error code |                 description                 |
 |:----------:|:-------------------------------------------:|
 | 1 | already solved/not solved previous problems |
-| 2 | wrong flag |
-
-## submit(oobal problem)
-* Method: POST
-* cookies: session_id
-* endpoint: /oobal/<int:id>
-* from datas:
-
-| name |type| description  |
-|:----:|:---:|:------------:|
-| flag |string| flag |
-
-* response:
-  * success:  
-```json
-{
-  "success": true
-}
-```
-  * error:  
-```json
-{
-  "success": false,
-  "error": 1
-}
-```
-| error code |                 description                 |
-|:----------:|:-------------------------------------------:|
-| 1 | already solved |
 | 2 | wrong flag |
 
 ## scoreboard
