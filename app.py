@@ -28,6 +28,12 @@ def user_info():
     return jsonify(user_tools.get_user_info())
 
 
+@app.route('/user/oobal')
+@user_tools.require_login
+def user_oobal_info():
+    return str(user_tools.get_user_solved_oobal())
+
+
 if __name__ == '__main__':
     db_tools.db_init()
     app.run(host='0.0.0.0', port=8000)
