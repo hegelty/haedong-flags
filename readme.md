@@ -145,3 +145,9 @@
   ]
 }
 ```
+
+## user oobal info
+* Method: GET/POST
+* cookies: session_id
+* endpoint: /user/oobal
+* response: 1 if solved, 0 if not solved
