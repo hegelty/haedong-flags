@@ -153,3 +153,22 @@
   ]
 ]
 ```
+
+## user info
+* Method: GET/POST
+* cookies: session_id
+* endpoint: /user/info
+* response:
+  * success:  
+```json
+{
+  "success": true,
+  "name": "name",
+  "student_id": "student_id",
+  "score": "score(int)",
+  "solved": "solved(int)",
+  "oobal": [
+    "solved oobal problem num(int)",
+  ]
+}
+```
