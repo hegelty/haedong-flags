@@ -24,7 +24,10 @@ def submit_get(problem_id):
 @user_tools.require_login
 def submit_post(problem_id):
     if user_tools.get_user_info()['solved'] + 1 != problem_id:
-        return Response(status=403)
+        return {
+            'success': False,
+            'error': 1
+        }
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
@@ -38,5 +41,5 @@ def submit_post(problem_id):
 
     return {
         'success': False,
-        'error': '플래그가 틀렸습니다.'
+        'error': 2
     }

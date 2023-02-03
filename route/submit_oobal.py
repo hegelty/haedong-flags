@@ -4,7 +4,6 @@ from tools import user_tools, db_tools
 oobal_router = Blueprint('oobal', __name__, url_prefix='/oobal')
 
 
-
 @oobal_router.route('/', methods=['GET'])
 @user_tools.require_login
 def submit_oobal_home():
@@ -24,7 +23,10 @@ def submit_oobal_get(id):
 @user_tools.require_login
 def submit_oobal_post(id):
     if str(id) in user_tools.get_user_info()['solved_oobal']:
-        return Response(status=403)
+        return {
+            'success': False,
+            'error': 1
+        }
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
@@ -38,5 +40,5 @@ def submit_oobal_post(id):
 
     return {
         'success': False,
-        'error': '플래그가 틀렸습니다.'
+        'error': 2
     }

@@ -18,7 +18,11 @@ def login_post():
     })
 
     if resp.status_code != 200:
-        return Response(status=403)
+        return {
+            'success': False,
+            'error': 1,
+            'session': user_tools.make_session(resp.json()['id'])[0]
+        }
 
     token = resp.json()['access_token']
 
@@ -34,7 +38,7 @@ def login_post():
     if not curs.fetchall():
         return {
             'success': False,
-            'error':'등록되지 않은 유저입니다.',
+            'error': 2,
             'session': user_tools.make_session(resp.json()['id'])[0]
         }
 
@@ -54,13 +58,13 @@ def register_post():
     if len(name) > 6:
         return {
             'success': False,
-            'error':'이름은 6글자를 넘을 수 없습니다.'
+            'error': 10
         }
 
     if not student_id.isdigit() or len(student_id) != 4:
         return {
             'success': False,
-            'error':'학번은 네자리 숫자로만 입력해주세요.'
+            'error': 11
         }
 
     user_id = user_tools.get_user_id(request.cookies.get('session_id'))
@@ -71,7 +75,7 @@ def register_post():
     if curs.fetchall():
         return {
             'success': False,
-            'errer':'이미 등록된 계정입니다.'
+            'errer': 2
         }
 
     curs.execute('insert into user (id, name, student_id, score, solved, solved_oobal) values (?, ?, ?, ?, ?, ?)',
