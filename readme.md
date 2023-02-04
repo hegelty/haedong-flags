@@ -2,6 +2,19 @@
 2023년 19기 해동 신입생 선발
 
 # Docs
+* General errors
+* 
+```json
+{
+  "success": false,
+  "error": 1
+}
+```
+| error code |   description   |
+|:----------:|:---------------:|
+|     -1     |  require login  |
+|     -2     | session expired |
+
 ## login
 * Method: GET
 * endpoint: /login

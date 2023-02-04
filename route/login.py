@@ -9,7 +9,7 @@ login_router = Blueprint('login', __name__, url_prefix='/login')
 @login_router.route('/', methods=['GET'])
 def login_post():
     code = request.args.get('code')
-    resp = requests.post(oauth.domain+'/oauth2/auth', params={
+    resp = requests.post(oauth.domain + '/oauth2/auth', params={
         'client_id': oauth.id,
         'scope': 'id'
     }, data={
@@ -18,15 +18,15 @@ def login_post():
     })
 
     if resp.status_code != 200:
-        return {
+        resp = make_response({
             'success': False,
-            'error': 1,
-            'session': user_tools.make_session(resp.json()['id'])[0]
-        }
+            'error': 1
+        })
+        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=True, secure=True)
 
     token = resp.json()['access_token']
 
-    resp = requests.post(oauth.domain+'/ex/user/info', data={
+    resp = requests.post(oauth.domain + '/ex/user/info', data={
         'token': token,
         'client_id': oauth.id
     })
@@ -36,17 +36,20 @@ def login_post():
     curs.execute('select id from user where id = ?', [resp.json()['id']])
 
     if not curs.fetchall():
-        return {
+        resp = make_response({
             'success': False,
-            'error': 2,
-            'session': user_tools.make_session(resp.json()['id'])[0]
-        }
+            'error': 2
+        })
+        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=True, secure=True)
+        return resp
 
     session_id, expire = user_tools.make_session(resp.json()['id'])
-    return {
-            'success': True,
-            'session_id': session_id
-    }
+
+    resp = make_response({
+        'success': True
+    })
+    resp.set_cookie('session', session_id, expires=60*60*24*7, httponly=True, secure=True)
+    return resp
 
 
 @login_router.route('/register', methods=['POST'])
@@ -67,7 +70,7 @@ def register_post():
             'error': 11
         }
 
-    user_id = user_tools.get_user_id(request.cookies.get('session_id'))
+    user_id = user_tools.get_user_id()
     conn = db_tools.get_conn()
     curs = conn.cursor()
     curs.execute('select id from user where id = ?', [user_id])
@@ -75,7 +78,7 @@ def register_post():
     if curs.fetchall():
         return {
             'success': False,
-            'errer': 2
+            'error': 2
         }
 
     curs.execute('insert into user (id, name, student_id, score, solved, solved_oobal) values (?, ?, ?, ?, ?, ?)',
@@ -83,5 +86,27 @@ def register_post():
     conn.commit()
 
     return {
-            'success': True
+        'success': True
+    }
+
+
+@login_router.route('/delete', methods=['POST'])
+@user_tools.require_login
+def register_post():
+    user_id = user_tools.get_user_id()
+    conn = db_tools.get_conn()
+    curs = conn.cursor()
+    curs.execute('select id from user where id = ?', [user_id])
+
+    if not curs.fetchall():
+        return {
+            'success': False,
+            'error': 2
+        }
+
+    curs.execute('delete from user where id = ?', [user_id])
+    conn.commit()
+
+    return {
+        'success': True
     }

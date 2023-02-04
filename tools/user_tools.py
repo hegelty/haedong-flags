@@ -27,10 +27,16 @@ def require_login(func):
     def decorator(*args, **kwargs):
         session_id = request.cookies.get('session_id')
         if session_id not in sessions:
-            return redirect('/login')
+            return {
+                'success': False,
+                'code': -1
+            }
         if sessions[session_id]["expire"] < datetime.datetime.now():
             del (sessions[session_id])
-            return redirect('/login')
+            return {
+                'success': False,
+                'code': -2
+            }
 
         renew_session(session_id)
 
@@ -39,7 +45,8 @@ def require_login(func):
     return decorator
 
 
-def get_user_id(session):
+def get_user_id():
+    session = request.cookies.get('session_id')
     return sessions[session]["user_id"]
 
 
