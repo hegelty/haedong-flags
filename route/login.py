@@ -23,6 +23,7 @@ def login_post():
             'error': 1
         })
         resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=False, secure=False)
+        return resp
 
     token = resp.json()['access_token']
 
