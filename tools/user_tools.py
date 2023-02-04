@@ -68,11 +68,13 @@ def get_user_info():
     curs.execute('select name, student_id, solved, solved_oobal, score from user where id = ?', [sessions[session]["user_id"]])
     data = curs.fetchone()
     return {
+        'success': True,
         'id': sessions[session]["user_id"],
         'name': data[0],
         'student_id': data[1],
         'solved': int(data[2]),
         'solved_oobal': data[3].split(','),
+        'oobal': get_user_solved_oobal(),
         'score': data[4]
     }
 
