@@ -18,12 +18,10 @@ def login_post():
     })
 
     if resp.status_code != 200:
-        resp = make_response({
+        return {
             'success': False,
             'error': 1
-        })
-        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=False, secure=False)
-        return resp
+        }
 
     token = resp.json()['access_token']
 
@@ -37,11 +35,12 @@ def login_post():
     curs.execute('select id from user where id = ?', [resp.json()['id']])
 
     if not curs.fetchall():
+        session_id, expire = user_tools.make_session(resp.json()['id'])
         resp = make_response({
             'success': False,
             'error': 2
         })
-        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=False, secure=False)
+        resp.set_cookie('session', session_id, expires=60*60*24*7, httponly=False, secure=False)
         return resp
 
     session_id, expire = user_tools.make_session(resp.json()['id'])
