@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Blueprint, render_template, request, redirect, make_response, Response
 import requests
 from tools import user_tools, db_tools, oauth
@@ -40,7 +42,7 @@ def login_post():
             'success': False,
             'error': 2
         })
-        resp.set_cookie('session', session_id, expires=60*60*24*7, httponly=False, secure=False)
+        resp.set_cookie('session', session_id, expires=datetime.datetime.now() + datetime.timedelta(days=7), httponly=False, secure=False)
         return resp
 
     session_id, expire = user_tools.make_session(resp.json()['id'])
@@ -48,7 +50,7 @@ def login_post():
     resp = make_response({
         'success': True
     })
-    resp.set_cookie('session', session_id, expires=60*60*24*7, httponly=False, secure=False)
+    resp.set_cookie('session', session_id, expires=datetime.datetime.now() + datetime.timedelta(days=7), httponly=False, secure=False)
     return resp
 
 
