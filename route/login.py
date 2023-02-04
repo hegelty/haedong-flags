@@ -22,7 +22,7 @@ def login_post():
             'success': False,
             'error': 1
         })
-        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=True, secure=True)
+        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=FFalse, secure=False)
 
     token = resp.json()['access_token']
 
@@ -30,7 +30,7 @@ def login_post():
         'token': token,
         'client_id': oauth.id
     })
-    print(resp.text)
+
     conn = db_tools.get_conn()
     curs = conn.cursor()
     curs.execute('select id from user where id = ?', [resp.json()['id']])
@@ -40,7 +40,7 @@ def login_post():
             'success': False,
             'error': 2
         })
-        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=True, secure=True)
+        resp.set_cookie('session', user_tools.make_session(resp.json()['id'])[0], expires=60*60*24*7, httponly=FFalse, secure=False)
         return resp
 
     session_id, expire = user_tools.make_session(resp.json()['id'])
@@ -48,7 +48,7 @@ def login_post():
     resp = make_response({
         'success': True
     })
-    resp.set_cookie('session', session_id, expires=60*60*24*7, httponly=True, secure=True)
+    resp.set_cookie('session', session_id, expires=60*60*24*7, httponly=False, secure=False)
     return resp
 
 
@@ -92,7 +92,7 @@ def register_post():
 
 @login_router.route('/delete', methods=['POST'])
 @user_tools.require_login
-def register_post():
+def delete_user():
     user_id = user_tools.get_user_id()
     conn = db_tools.get_conn()
     curs = conn.cursor()
