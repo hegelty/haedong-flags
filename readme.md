@@ -12,6 +12,7 @@
 ```
 | error code |   description   |
 |:----------:|:---------------:|
+| 0 | unknown error |
 |     -1     |  require login  |
 |     -2     | session expired |
 

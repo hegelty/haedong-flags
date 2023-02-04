@@ -57,16 +57,23 @@ def login_post():
 @login_router.route('/register', methods=['POST'])
 @user_tools.require_login
 def register_post():
-    name = request.form.get('name')
-    student_id = request.form.get('student_id')
+    try:
+        body = request.get_json()
+        name = body['name']
+        student_id = body['student_id']
+    except:
+        return {
+            'success': False,
+            'error': 0
+        }
 
-    if len(name) > 6:
+    if not name or len(name) > 6:
         return {
             'success': False,
             'error': 10
         }
 
-    if not student_id.isdigit() or len(student_id) != 4:
+    if not student_id or not student_id.isdigit() or len(student_id) != 4:
         return {
             'success': False,
             'error': 11

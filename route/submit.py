@@ -14,7 +14,14 @@ def submit_home():
 @submit_router.route('/', methods=['POST'])
 @user_tools.require_login
 def submit_post():
-    flag = request.form['flag']
+    try:
+        body = request.get_json()
+        flag = body['flag']
+    except:
+        return {
+            'success': False,
+            'error': 0
+        }
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
