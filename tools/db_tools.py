@@ -19,14 +19,16 @@ def db_init():
     CREATE TABLE IF NOT EXISTS problem (
     id INTEGER PRIMARY KEY,
     answer TEXT NOT NULL,
-    score INTEGER NOT NULL
+    score INTEGER NOT NULL,
+    message TEXT NOT NULL
     )
     ''')
     curs.execute('''
     CREATE TABLE IF NOT EXISTS problem_oobal (
     id INTEGER PRIMARY KEY,
     answer TEXT NOT NULL,
-    score INTEGER NOT NULL
+    score INTEGER NOT NULL,
+    message TEXT NOT NULL
     )
     ''')
     curs.execute('''

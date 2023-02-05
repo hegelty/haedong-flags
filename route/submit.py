@@ -25,10 +25,10 @@ def submit_post():
 
     conn = db_tools.get_conn()
     curs = conn.cursor()
-    curs.execute('select id, score from problem where answer = ?', [flag])
+    curs.execute('select id, score, message from problem where answer = ?', [flag])
     problem = curs.fetchall()
     if not problem:
-        curs.execute('select id, score from problem_oobal where answer = ?', [flag])
+        curs.execute('select id, score, message from problem_oobal where answer = ?', [flag])
         problem = curs.fetchall()
         if not problem:
             return {
@@ -44,7 +44,8 @@ def submit_post():
             user_tools.add_solved_oobal(problem[0][0])
             return {
                 'success': True,
-                'oobal': True
+                'oobal': True,
+                'message': problem[0][2]
             }
     else:
         if int(problem[0][0]) != user_tools.get_user_info()['solved'] + 1:
@@ -55,5 +56,6 @@ def submit_post():
         user_tools.add_solved(problem[0][0])
         return {
             'success': True,
-            'oobal': False
+            'oobal': False,
+            'message': problem[0][2]
         }

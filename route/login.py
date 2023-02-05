@@ -42,7 +42,7 @@ def login_post():
             'success': False,
             'error': 2
         })
-        resp.set_cookie('session_id', session_id, expires=datetime.datetime.now() + datetime.timedelta(days=7), httponly=False, secure=False)
+        resp.set_cookie('session_id', session_id, expires=datetime.datetime.now() + datetime.timedelta(days=7), httponly=False, secure=True, samesite='None')
         return resp
 
     session_id, expire = user_tools.make_session(resp.json()['id'])
@@ -50,7 +50,7 @@ def login_post():
     resp = make_response({
         'success': True
     })
-    resp.set_cookie('session_id', session_id, expires=datetime.datetime.now() + datetime.timedelta(days=7), httponly=False, secure=False)
+    resp.set_cookie('session_id', session_id, expires=datetime.datetime.now() + datetime.timedelta(days=7), httponly=False, secure=True, samesite='None')
     return resp
 
 
@@ -99,6 +99,8 @@ def register_post():
     }
 
 
+# for debug
+# TODO: remove this
 @login_router.route('/delete', methods=['POST'])
 @user_tools.require_login
 def delete_user():
