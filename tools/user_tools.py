@@ -80,12 +80,15 @@ def get_user_info():
 
 
 def get_user_solved_oobal():
-    session = request.cookies.get('session_id')
-    conn = db_tools.get_conn()
-    curs = conn.cursor()
-    curs.execute('select solved_oobal from user where id = ?', [sessions[session]["user_id"]])
-    data = [i for i in curs.fetchone() if i!='']
-    return 1 if len(data) > 0 else 0
+    try:
+        session = request.cookies.get('session_id')
+        conn = db_tools.get_conn()
+        curs = conn.cursor()
+        curs.execute('select solved_oobal from user where id = ?', [sessions[session]["user_id"]])
+        data = [i for i in curs.fetchone() if i!='']
+        return 1 if len(data) > 0 else 0
+    except:
+        return 0
 
 
 def add_solved(problem_id):
