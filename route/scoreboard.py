@@ -42,4 +42,8 @@ def scoreboard_api():
             data[i][2],
             data[i][3]
         ]
-    return jsonify(data)
+    return {
+        "success": True,
+        "login": user_tools.login_check(),
+        "data": data
+    }
