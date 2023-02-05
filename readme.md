@@ -142,7 +142,10 @@
       "name",
       "student_id",
       "score(int)",
-      "solved(int)"
+      "solved(int)",
+      [
+        "solved oobal problem num(int)",
+      ]
     ]
   ]
 }
