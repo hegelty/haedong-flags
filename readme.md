@@ -117,28 +117,35 @@
 * response:
   * success(not logged in):  
 ```json
-[
-  [
-    "name",
-    "student_id",
-    "score(int)",
-    "solved(int)"
+{
+  "success": true,
+  "login": false,
+  "oobal": false,
+  "data": [
+    [
+      "name",
+      "student_id",
+      "score(int)",
+      "solved(int)"
+    ]
   ]
-]
+}
 ```
   * success(logged in):  
 ```json
-[
-  [
-    "name",
-    "student_id",
-    "score(int)",
-    "solved(int)",
+{
+  "success": true,
+  "login": true,
+  "oobal": true/false
+  "data": [
     [
-      "solved oobal problem num(int)",
+      "name",
+      "student_id",
+      "score(int)",
+      "solved(int)"
     ]
   ]
-]
+}
 ```
 
 ## user info

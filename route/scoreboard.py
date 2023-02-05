@@ -45,5 +45,6 @@ def scoreboard_api():
     return {
         "success": True,
         "login": user_tools.login_check(),
+        "oobal": user_tools.get_user_info()['oobal'] if user_tools.login_check() else False,
         "data": data
     }
