@@ -79,6 +79,41 @@ def get_user_info():
     }
 
 
+def get_user_info_2():
+    session = request.cookies.get('session_id')
+    conn = db_tools.get_conn()
+    curs = conn.cursor()
+    curs.execute('select * from problem')
+    problem_len = len(curs.fetchall())
+    curs.execute('select * from problem_oobal')
+    oobal_len = len(curs.fetchall())
+
+    curs.execute('select name, student_id, solved, solved_oobal, score from user where id = ?', [sessions[session]["user_id"]])
+    data = curs.fetchone()
+
+    solved = []
+    for i in range(data[2]):
+        solved.append(True)
+    for i in range(problem_len - data[2]):
+        solved.append(False)
+
+    if get_user_solved_oobal():
+        for i in range(1, oobal_len + 1):
+            solved.append(str(i) in data[3].split(',')[1:])
+
+    return {
+        'success': True,
+        'id': sessions[session]["user_id"],
+        'name': data[0],
+        'student_id': data[1],
+        'solved': solved,
+        "problem_len": problem_len,
+        "oobal_len": oobal_len if get_user_solved_oobal() else 0,
+        'oobal': get_user_solved_oobal() == 1,
+        'score': data[4]
+    }
+
+
 def get_user_solved_oobal():
     try:
         session = request.cookies.get('session_id')

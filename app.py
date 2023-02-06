@@ -19,7 +19,7 @@ def index():
 @app.route('/user/info')
 @user_tools.require_login
 def user_info():
-    return jsonify(user_tools.get_user_info())
+    return jsonify(user_tools.get_user_info_2())
 
 
 @app.route('/user/oobal')
