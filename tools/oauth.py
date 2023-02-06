@@ -1,2 +1,2 @@
 domain = 'https://gbs.wiki'
-id = 'test'
+id = 'hd-flag'

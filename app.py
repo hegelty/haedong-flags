@@ -1,7 +1,6 @@
 from flask import Flask, render_template, jsonify
-from flask_cors import CORS
 from route import login, submit, scoreboard
-from tools import user_tools, db_tools, oauth
+from tools import user_tools, db_tools
 
 app = Flask(__name__)
 
