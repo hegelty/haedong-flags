@@ -115,38 +115,23 @@
 * cookies: session_id(optional)
 * endpoint: /scoreboard/api
 * response:
-  * success(not logged in):  
+  * success:  
 ```json
 {
   "success": true,
-  "login": false,
-  "oobal": false,
+  "login": true/false,
+  "oobal": true/false,
+  "oobal_len": "oobal problem length(int)",
+  "problem_len": "problem length(int)",
   "data": [
-    [
-      "name",
-      "student_id",
-      "score(int)",
-      "solved(int)"
-    ]
-  ]
-}
-```
-  * success(logged in):  
-```json
-{
-  "success": true,
-  "login": true,
-  "oobal": true/false
-  "data": [
-    [
-      "name",
-      "student_id",
-      "score(int)",
-      "solved(int)",
-      [
-        "solved oobal problem num(int)",
+    {
+      "name": "name",
+      "student_id": "student id",
+      "score": "score(int)",
+      "solved": [
+        True/False,
       ]
-    ]
+    }
   ]
 }
 ```
@@ -159,13 +144,16 @@
   * success:  
 ```json
 {
+  "id": "user id",
   "success": true,
   "name": "name",
-  "student_id": "student_id",
+  "student_id": "student id",
   "score": "score(int)",
-  "solved": "solved(int)",
-  "oobal": [
-    "solved oobal problem num(int)",
+  "oobal": true/false,
+  "oobal_len": "oobal problem length(int)",
+  "problem_len": "problem length(int)"
+  "solved": [
+    True/False,
   ]
 }
 ```
