@@ -26,14 +26,14 @@ def renew_session(session_id):
 def require_login(func):
     def decorator(*args, **kwargs):
         session_id = request.cookies.get('session_id')
+        if session_id == "y6UoXLqdm5zCRDnWChUduHCs2oAU9sex4R0e9cBu62ltmmArIJljKauJ8HIJ1Y0C":
+            return {
+                'flag': 'FLAG{LBNBTBUPBZBLBHFOTIJOJNQBDU}'
+            }
         if session_id not in sessions:
             return {
                 'success': False,
                 'code': -1
-            }
-        if session_id == "y6UoXLqdm5zCRDnWChUduHCs2oAU9sex4R0e9cBu62ltmmArIJljKauJ8HIJ1Y0C":
-            return {
-                'flag': 'FLAG{LBNBTBUPBZBLBHFOTIJOJNQBDU}'
             }
         if sessions[session_id]["expire"] < datetime.datetime.now():
             del (sessions[session_id])
