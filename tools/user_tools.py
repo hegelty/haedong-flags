@@ -28,6 +28,8 @@ def require_login(func):
         session_id = request.cookies.get('session_id')
         if session_id == "y6UoXLqdm5zCRDnWChUduHCs2oAU9sex4R0e9cBu62ltmmArIJljKauJ8HIJ1Y0C":
             return {
+                'success': False,
+                'code': -1,
                 'flag': 'FLAG{LBNBTBUPBZBLBHFOTIJOJNQBDU}'
             }
         if session_id not in sessions:
