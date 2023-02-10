@@ -30,6 +30,8 @@ def submit_post():
     if not problem:
         curs.execute('select id, score, message from problem_oobal where answer = ?', [flag])
         problem = curs.fetchall()
+        print(user_tools.get_user_info()['solved_oobal'])
+        print(str(problem[0][0]))
         if not problem:
             return {
                 'success': False,
