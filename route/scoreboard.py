@@ -3,7 +3,7 @@ from tools import user_tools, db_tools
 
 scoreboard_router = Blueprint('scoreboard', __name__, url_prefix='/scoreboard')
 
-
+'''
 @scoreboard_router.route('/', methods=['GET'])
 def scoreboard_get():
     conn = db_tools.get_conn()
@@ -21,6 +21,7 @@ def scoreboard_get():
     curs.execute('select name, student_id, problem_id, problem_type, time from history order by time desc limit 20')
     history = curs.fetchall()
     return render_template('scoreboard/scoreboard.html', data=data, history=history)
+'''
 
 
 @scoreboard_router.route('/api', methods=['GET'])
