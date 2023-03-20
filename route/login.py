@@ -97,27 +97,3 @@ def register_post():
     return {
         'success': True
     }
-
-
-# for debug
-# TODO: remove this
-@login_router.route('/delete', methods=['POST'])
-@user_tools.require_login
-def delete_user():
-    user_id = user_tools.get_user_id()
-    conn = db_tools.get_conn()
-    curs = conn.cursor()
-    curs.execute('select id from user where id = ?', [user_id])
-
-    if not curs.fetchall():
-        return {
-            'success': False,
-            'error': 2
-        }
-
-    curs.execute('delete from user where id = ?', [user_id])
-    conn.commit()
-
-    return {
-        'success': True
-    }
